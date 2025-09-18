@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      =  "file:./baby_cash.db"
+}
+
+
+model producto{
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  stock       Int
+  categoria   String
+  createdAt   DateTime @default(now())
+  carritos carrito[]
+  detalles detalleVenta[]
+  inventarios inventario[]
+  itemCarritos itemCarrito[]
+}
+
+model usuario{
+  id Int  @id @default(autoincrement())
+  nombre String 
+  apellido String
+  correo String @unique
+  contrasena String
+  tipo String
+  fechaRegistro DateTime @default(now())
+  carritos carrito[]
+  ventas venta[]
+}
+
+model venta{
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  total Float
+  fecha DateTime @default(now())
+  usuario_Id Int
+  usuario usuario @relation(fields: [usuarioId], references: [id])
+  detalles detalleVenta[]
+  envios envio[]
+  pagos pago[]
+}
+
+model detalleVenta{
+  id Int @id @default(autoincrement())
+  ventaId Int
+  productoId Int
+  cantidad Int
+  precioUnitario Float
+  venta venta @relation(fields: [ventaId], references: [id])
+  producto producto @relation(fields: [productoId], references: [id])
+}
+
+model inventario{
+  id Int @id @default(autoincrement())
+  productoId Int
+  cantidad Int
+  fechaEntrada DateTime @default(now())
+  lote String
+  proveedor String
+  producto producto @relation(fields: [productoId], references: [id])
+}
+
+model envio{
+  id Int @id @default(autoincrement())
+  ventaId Int
+  direccion String
+  ciudad String
+  fechaEnvio DateTime @default(now())
+  estadoEnvio String
+  venta venta @relation(fields: [ventaId], references: [id])
+}
+
+model carrito{
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  fechaCreacion DateTime @default(now())
+  estado String
+  productoId Int
+  usuario usuario @relation(fields: [usuarioId], references: [id])
+  producto producto @relation(fields: [productoId], references: [id])
+  itemCarritos itemCarrito[]
+}
+ model cliente{
+  id Int @id @default(autoincrement())
+  usuarioid Int
+  telefono String
+  direccion String
+  fechaNacimiento DateTime @default(now())
+ }
+
+ model itemCarrito{
+  id Int @id @default(autoincrement())
+  carritoId Int
+  productoId Int
+  cantidad Int
+  carrito carrito @relation(fields: [carritoId], references: [id])
+  producto producto @relation(fields: [productoId], references: [id])
+ }
+
+ model pago{
+  id Int @id @default(autoincrement())
+  ventaId Int
+  metodoPago String
+  estadoPago String
+  fechaPago DateTime @default(now())
+  venta venta @relation(fields: [ventaId], references: [id])
+ }

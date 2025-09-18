@@ -1,0 +1,15 @@
+meta {
+  name: traer todos los usuarios
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://loclahost/8000/usuarios
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
