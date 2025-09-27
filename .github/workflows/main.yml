@@ -1,3 +1,4 @@
+```yaml
 name: CI - Backend BabyCash
 
 on:
@@ -33,10 +34,15 @@ jobs:
         working-directory: ./backend-babycash
         run: npm run build
 
-      - name: ✅ Run tests
+      - name: ✅ Run unit tests
         working-directory: ./backend-babycash
-        run: npm test -- --config ./test/jest-e2e.json
+        run: npm test
+
+      - name: 🧪 Run e2e tests
+        working-directory: ./backend-babycash
+        run: npm run test:e2e
 
       - name: 🔍 Run linter
         working-directory: ./backend-babycash
         run: npm run lint
+```
