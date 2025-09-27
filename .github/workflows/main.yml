@@ -1,4 +1,4 @@
-name: CI - BabyCash
+name: CI - Backend BabyCash
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
-  build-test-lint:
+  backend-ci:
     runs-on: ubuntu-latest
 
     strategy:
@@ -22,39 +22,21 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-
-      # ---------- Backend ----------
-      - name: 📦 Install Backend Dependencies
-        working-directory: ./backend-babycash
-        run: npm install
-        with:
           cache: 'npm'
           cache-dependency-path: ./backend-babycash/package-lock.json
 
-      - name: 🏗 Build Backend
+      - name: 📦 Install dependencies
         working-directory: ./backend-babycash
-        run: npm run build
-
-      - name: ✅ Test Backend
-        working-directory: ./backend-babycash
-        run: npm test
-
-      - name: 🔍 Lint Backend
-        working-directory: ./backend-babycash
-        run: npm run lint
-
-      # ---------- Frontend ----------
-      - name: 📦 Install Frontend Dependencies
-        working-directory: ./frontend-babycash
         run: npm install
-        with:
-          cache: 'npm'
-          cache-dependency-path: ./frontend-babycash/package-lock.json
 
-      - name: 🏗 Build Frontend
-        working-directory: ./frontend-babycash
+      - name: 🏗 Build project
+        working-directory: ./backend-babycash
         run: npm run build
 
-      - name: 🔍 Lint Frontend
-        working-directory: ./frontend-babycash
+      - name: ✅ Run tests
+        working-directory: ./backend-babycash
+        run: npm test -- --config ./test/jest-e2e.json
+
+      - name: 🔍 Run linter
+        working-directory: ./backend-babycash
         run: npm run lint
