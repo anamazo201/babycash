@@ -1,0 +1,60 @@
+name: CI - BabyCash
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🔧 Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # ---------- Backend ----------
+      - name: 📦 Install Backend Dependencies
+        working-directory: ./backend-babycash
+        run: npm install
+
+      - name: 🏗 Build Backend
+        working-directory: ./backend-babycash
+        run: npm run build
+
+      - name: ✅ Test Backend
+        working-directory: ./backend-babycash
+        run: npm test
+
+      - name: 🔍 Lint Backend
+        working-directory: ./backend-babycash
+        run: npm run lint --if-present
+
+      # ---------- Frontend ----------
+      - name: 📦 Install Frontend Dependencies
+        working-directory: ./frontend-babycash
+        run: npm install
+
+      - name: 🏗 Build Frontend
+        working-directory: ./frontend-babycash
+        run: npm run build
+
+      - name: ✅ Test Frontend
+        working-directory: ./frontend-babycash
+        run: npm test --if-present
+
+      - name: 🔍 Lint Frontend
+        working-directory: ./frontend-babycash
+        run: npm run lint --if-present
+
