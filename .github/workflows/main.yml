@@ -1,0 +1,42 @@
+name: CI - Backend BabyCash
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./backend-babycash/package-lock.json
+
+      - name: 📦 Install dependencies
+        working-directory: ./backend-babycash
+        run: npm install
+
+      - name: 🏗 Build project
+        working-directory: ./backend-babycash
+        run: npm run build
+
+      - name: ✅ Run tests
+        working-directory: ./backend-babycash
+        run: npm test -- --config ./test/jest-e2e.json
+
+      - name: 🔍 Run linter
+        working-directory: ./backend-babycash
+        run: npm run lint
